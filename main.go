@@ -31,11 +31,13 @@ func TermSize() (error, int, int) {
 		}
 	}
 
-	_, _, _ = syscall.Syscall(
+	if _, _, err := syscall.Syscall(
 		syscall.SYS_IOCTL,
 		fd,
 		uintptr(syscall.TIOCGWINSZ),
-		uintptr(unsafe.Pointer(&sz)))
+		uintptr(unsafe.Pointer(&sz))); err != 0 {
+		return err, int(0), int(0)
+	}
 
 	return nil, int(sz.cols), int(sz.rows)
 }
